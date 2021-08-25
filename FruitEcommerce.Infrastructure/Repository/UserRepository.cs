@@ -17,8 +17,8 @@ namespace FruitEcommerce.Infrastructure.Repository
         {
             var users = new List<User>
             {
-                new User { UserId = 1, Username = "batman", Password = "batman", Role = "manager" },
-                new User { UserId = 2, Username = "robin", Password = "robin", Role = "employee" }
+                new User { UserId = 1, Username = "Usuario1", Password = "123456", Role = "admin" },
+                new User { UserId = 2, Username = "Usuario2", Password = "654321", Role = "view" }
             };
             return users.Where(x => x.Username.ToLower() == username.ToLower() && x.Password == password).FirstOrDefault();
         }

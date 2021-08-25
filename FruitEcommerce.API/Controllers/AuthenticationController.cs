@@ -17,6 +17,26 @@ namespace FruitEcommerce.API.Controllers
             _userService = userService;
         }
 
+        /// <summary>
+        /// Buscar Token
+        /// </summary>
+        /// <remarks>
+        /// Exemplo de Requisição:
+        ///     
+        ///     {
+        ///        "UserName": "Usuario1",
+        ///        "Password": "123456"
+        ///     }
+        ///     
+        /// ou 
+        ///
+        ///     {
+        ///        "UserName": "Usuario2",
+        ///        "Password": "654321"
+        ///     }
+        ///     
+        /// </remarks>
+        /// <response code="200">Retorna token para autenticação</response>
         [HttpPost]
         [Route("login")]
         public ActionResult<dynamic> Authenticate([FromBody] User model)
