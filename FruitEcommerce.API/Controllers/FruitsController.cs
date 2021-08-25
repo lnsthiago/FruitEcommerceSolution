@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FruitEcommerce.ApplicationCore.Entities;
-using FruitEcommerce.Infrastructure.Data;
+using FruitEcommerce.ApplicationCore.Interfaces.Services;
 
 namespace FruitEcommerce.API.Controllers
 {
@@ -14,11 +11,11 @@ namespace FruitEcommerce.API.Controllers
     [ApiController]
     public class FruitsController : ControllerBase
     {
-        private readonly DatabaseContext _context;
+        private IFruitService _fruitService;
 
-        public FruitsController(DatabaseContext context)
+        public FruitsController(IFruitService fruitService)
         {
-            _context = context;
+            _fruitService = fruitService;
         }
 
         /// <summary>
@@ -26,24 +23,22 @@ namespace FruitEcommerce.API.Controllers
         /// </summary>
         /// <response code="200">Retorna uma lista com todas as Frutas</response>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Fruit>>> GetFruits()
+        public ActionResult<IEnumerable<Fruit>> GetFruits()
         {
-            return await _context.Fruits.ToListAsync();
+            return _fruitService.GetAll().ToList();
         }
 
         /// <summary>
         /// Buscar Fruta pelo Id
         /// </summary>
-        /// <response code="200">Retorna uma lista com todas as Frutas</response>
+        /// <response code="200">Retorna a Fruta conforme o Id filtrado</response>
         [HttpGet("{id}")]
-        public async Task<ActionResult<Fruit>> GetFruit(int id)
+        public ActionResult<Fruit> GetFruit(int id)
         {
-            var fruit = await _context.Fruits.FindAsync(id);
+            var fruit = _fruitService.GetById(id);
 
             if (fruit == null)
-            {
                 return NotFound();
-            }
 
             return fruit;
         }
@@ -51,32 +46,28 @@ namespace FruitEcommerce.API.Controllers
         /// <summary>
         /// Atualizar Fruta
         /// </summary>
-        /// <response code="200">Retorna a fruta com os dados atualizados</response>
         /// <param name="fruit">Objeto Fruit com as informações para atualizar</param>
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutFruit(int id, Fruit fruit)
+        public IActionResult PutFruit(int id, Fruit fruit)
         {
             if (id != fruit.FruitId)
-            {
                 return BadRequest();
-            }
-
-            _context.Entry(fruit).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                var fruitToUpdate = _fruitService.GetById(id);
+                if (fruitToUpdate == null)
+                    return NotFound();                
+
+                fruitToUpdate.UpdateProperties(fruit);
+                _fruitService.Update(fruitToUpdate);
             }
             catch (DbUpdateConcurrencyException)
             {
                 if (!FruitExists(id))
-                {
                     return NotFound();
-                }
                 else
-                {
                     throw;
-                }
             }
 
             return NoContent();
@@ -88,10 +79,9 @@ namespace FruitEcommerce.API.Controllers
         /// <response code="200">Retorna a fruta adicionada</response>
         /// <param name="fruit">Objeto Fruit com as informações para adicionar</param>
         [HttpPost]
-        public async Task<ActionResult<Fruit>> PostFruit(Fruit fruit)
+        public ActionResult<Fruit> PostFruit(Fruit fruit)
         {
-            _context.Fruits.Add(fruit);
-            await _context.SaveChangesAsync();
+            fruit = _fruitService.Add(fruit);
 
             return CreatedAtAction("GetFruit", new { id = fruit.FruitId }, fruit);
         }
@@ -100,23 +90,23 @@ namespace FruitEcommerce.API.Controllers
         /// Deletar Fruta
         /// </summary>
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteFruit(int id)
+        public IActionResult DeleteFruit(int id)
         {
-            var fruit = await _context.Fruits.FindAsync(id);
+            var fruit = _fruitService.GetById(id);
             if (fruit == null)
-            {
                 return NotFound();
-            }
 
-            _context.Fruits.Remove(fruit);
-            await _context.SaveChangesAsync();
+            _fruitService.Remove(fruit);
 
             return NoContent();
         }
 
         private bool FruitExists(int id)
         {
-            return _context.Fruits.Any(e => e.FruitId == id);
+            var fruit = _fruitService.GetById(id);
+            if (fruit == null)
+                return false;
+            return true;
         }
     }
 }

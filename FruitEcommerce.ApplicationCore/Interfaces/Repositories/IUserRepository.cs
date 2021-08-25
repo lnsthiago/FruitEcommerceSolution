@@ -4,6 +4,6 @@ namespace FruitEcommerce.ApplicationCore.Interfaces.Repositories
 {
     public interface IUserRepository : IRepository<User>
     {
-        User GetByUsernameAndPassword(string username, string password);
+        User GetByUserNameAndPassword(string username, string password);
     }
 }

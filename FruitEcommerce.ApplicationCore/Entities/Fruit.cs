@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace FruitEcommerce.ApplicationCore.Entities
 {
@@ -16,13 +17,19 @@ namespace FruitEcommerce.ApplicationCore.Entities
         [Display(Name = "Foto")]
         public byte[] Photo { get; set; }
 
-        [Display(Name = "Quantidade")]
-        public int Quantity { get; set; }
-
         [Display(Name = "Estoque")]
         public int Stock { get; set; }
 
         [Display(Name = "Valor")]
         public decimal Value { get; set; }
+
+        public void UpdateProperties(Fruit fruit)
+        {
+            Name = fruit.Name;
+            Description = fruit.Description;
+            Photo = fruit.Photo;
+            Stock = fruit.Stock;
+            Value = fruit.Value;
+        }
     }
 }
