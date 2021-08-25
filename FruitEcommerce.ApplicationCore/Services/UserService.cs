@@ -41,9 +41,9 @@ namespace FruitEcommerce.ApplicationCore.Services
             return tokenHandler.WriteToken(token);
         }
 
-        public User GetByUsernameAndPassword(string username, string password)
+        public User GetByUserNameAndPassword(string username, string password)
         {
-            return _userRepository.GetByUsernameAndPassword(username, password);
+            return _userRepository.GetByUserNameAndPassword(username, password);
         }
     }
 }

@@ -1,10 +1,6 @@
 ﻿using FruitEcommerce.ApplicationCore.Entities;
 using FruitEcommerce.ApplicationCore.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace FruitEcommerce.API.Controllers
 {
@@ -41,7 +37,7 @@ namespace FruitEcommerce.API.Controllers
         [Route("login")]
         public ActionResult<dynamic> Authenticate([FromBody] User model)
         {
-            var user = _userService.GetByUsernameAndPassword(model.Username, model.Password);
+            var user = _userService.GetByUserNameAndPassword(model.Username, model.Password);
 
             if (user == null)
                 return NotFound(new { message = "Usuário ou senha inválidos" });
@@ -52,8 +48,8 @@ namespace FruitEcommerce.API.Controllers
 
             return new
             {
-                user = user,
-                token = token
+                User = user,
+                Token = token
             };
         }
     }

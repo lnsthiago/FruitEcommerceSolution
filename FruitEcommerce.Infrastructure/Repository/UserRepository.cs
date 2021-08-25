@@ -13,7 +13,7 @@ namespace FruitEcommerce.Infrastructure.Repository
 
         }
 
-        public User GetByUsernameAndPassword(string username, string password)
+        public User GetByUserNameAndPassword(string username, string password)
         {
             var users = new List<User>
             {
